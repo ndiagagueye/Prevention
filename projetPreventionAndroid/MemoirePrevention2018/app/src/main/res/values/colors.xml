@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6d6d64</color>
+    <color name="colorPrimaryDark">#42423a</color>
+    <color name="colorPrimaryLight">#9b9b92</color>
+    <color name="colorAccent">#ffd438</color>
+    <color name="colorLightGray">#FBFFEE</color>
+    <color name="colorLight">#9cdbf195</color>
+    <color name="colorAccentDark">#e7a218</color>
+    <color name="colorAccentLight">#27ffd438</color>
+    <color name="colorRed">#e2341d</color>
+    <color name="colorTransparent">#01eae3c8</color>
+
+    <color name="fb_blue">#475993</color>
+    <color name="orange">#ff563f</color>
+
+    <color name="colorLightDark">#f34a9404</color>
+
+</resources>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccentLight"
+    android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"
+    tools:context=".activities.CommentsActivity">
+
+    <include layout="@layout/app_bar_layout"
+        android:id="@+id/comment_toolbar"/>
+
+    <LinearLayout
+        android:id="@+id/ll_first_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/comment_toolbar"
+        android:orientation="horizontal">
+
+
+        <EditText
+            android:id="@+id/et_new_comment_usert"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="26dp"
+            android:hint="Commentaire"
+            android:textColorHint="@color/colorAccentDark"
+            android:padding="10dp"
+            android:textColor="@color/colorPrimaryDark"
+
+            style="@style/font_text_bold"
+            android:background="@drawable/background_input_simple"
+            android:ems="10"
+            android:inputType="textMultiLine" />
+
+        <ImageView
+            android:id="@+id/et_new_comment_btn"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/ic_comment_accent"/>
+
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/comment_recycle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_first_linear"
+        android:layout_marginTop="15dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</RelativeLayout>

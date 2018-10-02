@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    android:id="@+id/bottom_sheet_scroll"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="true"
+    android:layout_alignParentBottom="true"
+    android:background="@android:color/white"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/scrollView_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_input_simple"
+            android:orientation="horizontal"
+            android:gravity="center">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more_about_accent"
+            android:contentDescription="TODO" />
+
+
+        </LinearLayout>
+    <ScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       >
+
+        <RelativeLayout
+
+            android:id="@+id/relative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/linearLayout_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_post_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:src="@drawable/partager"
+                    android:scaleType="centerCrop"/>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="5dp">
+
+                   <LinearLayout
+                       android:background="@drawable/background_btn_2"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_margin="10dp"
+                       android:orientation="vertical">
+
+                       <LinearLayout
+                           android:id="@+id/ll1"
+                           android:background="@drawable/background_post_image"
+                           android:layout_width="match_parent"
+                           android:layout_height="match_parent"
+                           android:orientation="horizontal"
+                           android:gravity="center">
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:text="Type :"
+                               style="@style/font_text_bold"/>
+
+                           <TextView
+                               android:id="@+id/tv_post_type"
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:layout_marginTop="2dp"
+                               android:text="Agression avec arme "
+                               style="@style/font_text_bold"
+                               android:textSize="13sp"
+                               android:layout_marginLeft="20dp"/>
+                       </LinearLayout>
+
+                       <TextView
+                           android:layout_marginTop="20dp"
+                           android:layout_gravity="center"
+                           android:layout_width="match_parent"
+                           android:textAlignment="center"
+                           android:layout_height="wrap_content"
+                           android:text="Description "
+                           android:background="@drawable/background_post_image"
+                           style="@style/font_text_bold"/>
+
+                       <android.support.v7.widget.CardView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:minHeight="50dp"
+                           android:layout_marginRight="10dp"
+                           android:layout_marginLeft="10dp"
+                           android:layout_marginTop="10dp">
+
+                       <TextView
+                           android:id="@+id/tv_post_description"
+                           android:layout_margin="5dp"
+                           android:layout_width="match_parent"
+                           android:layout_height="match_parent"
+                           android:textAlignment="center"
+                           style="@style/font_text_normal"
+                           android:textColor="@color/colorPrimaryDark"
+                           android:text="Description text post here "/>
+
+                       </android.support.v7.widget.CardView>
+
+                       <TextView
+                           android:layout_marginTop="10dp"
+                           android:layout_gravity="center"
+                           android:layout_width="match_parent"
+                           android:textAlignment="center"
+                           android:layout_height="wrap_content"
+                           android:text="Position géographique"
+                           android:background="@drawable/background_post_image"
+                           style="@style/font_text_bold"/>
+
+                       <android.support.v7.widget.CardView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:minHeight="20dp"
+                           android:layout_marginRight="5dp"
+                           android:layout_marginLeft="5dp"
+                           android:layout_marginTop="10dp">
+
+                           <LinearLayout
+                               android:layout_width="match_parent"
+                               android:layout_height="wrap_content">
+
+                               <TextView
+
+                                   android:layout_margin="5dp"
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="match_parent"
+                                   style="@style/font_text_bold"
+                                   android:textSize="13sp"
+                                   android:textColor="@color/colorPrimaryDark"
+                                   android:text="Latitude: "/>
+
+                               <TextView
+                                   android:id="@+id/tv_post_latitude"
+                                   android:layout_margin="5dp"
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="match_parent"
+                                   style="@style/font_text_normal"
+                                   android:textSize="13sp"
+                                   android:textColor="@color/colorPrimaryDark"
+                                   android:text=" 1457682"/>
+
+                               <TextView
+                                   android:layout_margin="5dp"
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="match_parent"
+                                   style="@style/font_text_bold"
+                                   android:textSize="13sp"
+                                   android:textColor="@color/colorPrimaryDark"
+                                   android:text="Longitude: "/>
+
+                               <TextView
+                                   android:id="@+id/tv_post_longitude"
+                                   android:layout_margin="5dp"
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="match_parent"
+                                   style="@style/font_text_normal"
+                                   android:textSize="13sp"
+                                   android:textColor="@color/colorPrimaryDark"
+                                   android:text=" 1457682 "/>
+                           </LinearLayout>
+
+                       </android.support.v7.widget.CardView>
+
+                       <LinearLayout
+                           android:id="@+id/ll2"
+                           android:layout_width="wrap_content"
+                           android:layout_height="match_parent"
+                           android:orientation="horizontal"
+                           android:layout_marginTop="10dp"
+                           android:layout_gravity="center"
+                           android:layout_marginBottom="10dp">
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:text="Publié le "
+                               android:layout_marginLeft="10dp"
+                               android:layout_gravity="center"
+                               android:textSize="13sp"
+                               android:textColor="@color/colorPrimaryDark"
+                              />
+
+                           <TextView
+                               android:id="@+id/tv_post_date"
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:layout_marginTop="2dp"
+                               android:text="21 sep 2018 à 10:20  "
+                               style="@style/font_text_bold"
+                               android:textColor="@color/colorAccentDark"
+                               android:textSize="13sp"
+                               android:layout_marginLeft="5dp"
+                               />
+                       </LinearLayout>
+
+                   </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_below="@id/linearLayout_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/background_post_image"
+                    >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_like_holo_light"/>
+
+                    <TextView
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="11 likes "
+                        android:layout_gravity="center"
+                        android:textColor="@color/colorAccentDark"/>
+
+
+                </LinearLayout>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycle_post_likes"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                </android.support.v7.widget.CardView>
+
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_post_image"
+                    android:orientation="horizontal"
+                    >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_comment_accent"/>
+
+                    <TextView
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="11 comments "
+                        android:layout_gravity="center"
+                        android:textColor="@color/colorAccentDark"/>
+
+
+                </LinearLayout>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycle_post_comments"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

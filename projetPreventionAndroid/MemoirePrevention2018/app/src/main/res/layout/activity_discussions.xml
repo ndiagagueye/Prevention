@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccentLight"
+    tools:context=".activities.DiscussionsActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_discussion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorLightGray">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tb_discussion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/civ_profile_dest_discussion"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/profile"
+                android:layout_marginLeft="25dp"
+                />
+
+            <TextView
+                android:id="@+id/tv_username_dest_discussion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Username"
+                style="@style/font_text_bold"
+                android:textColor="@color/colorAccentDark"/>
+
+
+
+
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_discussion"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/app_bar_discussion"
+        android:layout_above="@id/relativelayout_sender"
+     >
+
+    </android.support.v7.widget.RecyclerView>
+
+    <RelativeLayout
+        android:id="@+id/relativelayout_sender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+       >
+
+        <EditText
+            android:id="@+id/et_msg_discussion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="45dp"
+            android:paddingLeft="10dp"
+            android:hint="Entrer un message ..."
+            android:textColorHint="@color/colorPrimaryLight"
+            android:background="@drawable/background_input_simple"
+            android:layout_marginBottom="1dp"
+            />
+
+        <ImageView
+            android:id="@+id/iv_send_message"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_comment"
+            android:layout_alignParentRight="true"/>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.PostAlerteDetails">
+
+
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:sothree="http://schemas.android.com/tools"
+        android:layout_marginBottom="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <android.support.design.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/post_details_toolbar"
+                    android:layout_height="70dp"
+                    android:minHeight="60dp"
+                    android:layout_width="match_parent"
+                    android:background="@color/colorAccentLight">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/civ_image_profile_post"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:scaleType="centerCrop"
+                            android:layout_margin="2dp"
+                            android:src="@drawable/partager"/>
+
+                        <TextView
+                            android:id="@+id/tv_post_username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="username"
+                            android:layout_gravity="center"
+                            style="@style/font_text_bold"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_marginLeft="20dp"/>
+
+                    </LinearLayout>
+                </android.support.v7.widget.Toolbar>
+
+
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/map"
+                    android:layout_marginTop="70dp"
+                    tools:context=".activities.PostAlerteDetails"
+                    android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+
+                <ImageView
+                    android:id="@+id/iv_see_trajet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_help"
+                    android:layout_gravity="center_vertical"
+                    />
+
+
+            </android.support.design.widget.CoordinatorLayout>
+
+            <!--<include-->
+            <!--android:id="@+id/separator"-->
+            <!--layout="@layout/item_divider"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="2dp"-->
+            <!--android:layout_below="@id/map"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_marginLeft="2dp"-->
+            <!--/>-->
+
+        </FrameLayout>
+    </android.support.v4.widget.DrawerLayout>
+
+    <include layout="@layout/post_details_layout" android:layout_gravity="bottom"
+        tools:ignore="IncludeLayoutParam"></include>
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape	android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="10dp"  />
+
+    <stroke android:color="@color/cardview_light_background"/>
+    <gradient
+        android:type="linear"
+        android:centerColor="@color/colorLightGray"
+        android:endColor="@color/colorAccentLight"
+        android:startColor="@color/colorLight"
+        android:gradientRadius="20dp"  />
+
+</shape>

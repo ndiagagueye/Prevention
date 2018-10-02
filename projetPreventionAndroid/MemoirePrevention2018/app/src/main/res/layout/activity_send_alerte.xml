@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/AppTheme.Transparent"
+    android:layout_gravity="bottom"
+    android:background="@drawable/background_input"
+    tools:context=".activities.SendAlerteActivity">
+
+
+    <RelativeLayout
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_description_send_alerte"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="fitCenter"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/violen"/>
+
+        <LinearLayout
+            android:layout_below="@id/iv_description_send_alerte"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentBottom="true">
+
+            <EditText
+                android:id="@+id/et_description_send_alerte"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:ems="10"
+                style="@style/font_text_bold"
+                android:textAlignment="center"
+                android:hint="Description alerte"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/background_input_simple"
+                android:inputType="textMultiLine" />
+
+            <LinearLayout
+
+                android:id="@+id/ll_choose_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/background_post_image"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/calendar"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    style="@style/font_text_bold"
+                    android:layout_gravity="center_vertical"
+                    android:text="Choisir une date "/>
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/spinner_type_of_send_alerte"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp">
+
+            </Spinner>
+
+
+            <Button
+                android:id="@+id/btn_send_alerte"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="bottom"
+                android:text="Envoyer"
+                style="@style/font_text_bold"
+                android:textColor="@color/colorLightDark"
+                android:background="@drawable/background_message_receive"
+               />
+
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fl_take_a_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+
+            android:layout_alignRight="@id/iv_description_send_alerte"
+            android:layout_alignBottom="@id/iv_description_send_alerte"
+            app:srcCompat="@drawable/ic_take_a_picture" />
+
+    </RelativeLayout>
+
+
+
+
+
+</FrameLayout>

@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">MemoirePrevention2018</string>
+    <string name="drawer_open">Tiroir ouvert</string>
+    <string name="drawer_close">Tiroir ferme</string>
+
+    <string name="facebook_app_id">342919706461964</string>
+    <string name="fb_login_protocol_scheme">fb342919706461964</string>
+
+    <string name="google_api_direction_key">AIzaSyDom0eUht-NZMFvTsHCM5NyfNQog1N3zlM</string>
+
+
+    <string name="default_notification_channel_id">ND_CH_01</string>
+
+    <string name="login_fb_btn_label">"{faw-facebook-f}    Se connecter avec Facebook"</string>
+    <string name="login_google_btn_label">"{faw-google}    Se connecter avec Google"</string>
+    <string name="signup_fb_btn_label">"{faw-facebook-f}   Se connecter avec Facebook"</string>
+    <string name="create_account"><font color="#00ff00">text</font></string>
+    <string name="email">Adresse e-mail</string>
+    <string name="password">Mot de passe</string>
+    <string name="login">"{faw-facebook-f} Login"</string>
+    <string name="username">Nom complet</string>
+    <string name="register">S\'inscrire</string>
+    <string name="comment_message">Entrez le message texte</string>
+    <string name="describe_forget_password_txt">Pour réinitialiser votre mot de passe, veuillez entrer votre adresse e-mail associée a votre compte.</string>
+    <string name="email_address_hint">Adresse email</string>
+    <string name="forget_password_btn_label">Envoyer</string>
+
+    <string name="conditions_user">En vous inscrivant, vous acceptez nos conditions d\'utilisation et notre politique de confidentialité.</string>
+    <string name="logn_with_facebook">{faw-facebook-f} Se connecter avec Facebook</string>
+    <string name="login_btn_label">Se connecter</string>
+    <string name="get_started_btn_label">S\'inscrire</string>
+    <string name="forget_password">Mot de passe oublié? Réinitialiser</string>
+    <string name="no_account">Pas encore membre?</string>
+    <string name="have_account">Vous avez déjà un compte?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="desc_app">Nom_Apli alerte vos proches ou vos amis et vous géolocalise Le système capte votre alerte puis la retransmet immédiatement et automatiquement à vos proches par notification et alerte sonore sur leur smartphone de votre situation d\'urgence.</string>
+    <string name="comments_send">j\'ai jamais vu de telle chose dans ma vie ,merci de nous avoir prévenir</string>
+</resources>

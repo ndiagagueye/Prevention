@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "534647310385",
+    "firebase_url": "https://memoireprevention2018-9f05d.firebaseio.com",
+    "project_id": "memoireprevention2018-9f05d",
+    "storage_bucket": "memoireprevention2018-9f05d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:534647310385:android:1510a6bad08d7b51",
+        "android_client_info": {
+          "package_name": "com.example.gueye.memoireprevention2018"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "534647310385-tqvrb205mp2glfadlbr0qnieal6kt9ff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gueye.memoireprevention2018",
+            "certificate_hash": "77f6472790e4f8ec366bf2e9a9688401bd5f8743"
+          }
+        },
+        {
+          "client_id": "534647310385-k7pid1ost9d57mfpul62l49ka1d8hnr3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR_zvAHRAG-00HxhdOBxJPNtdL60GbKbY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "534647310385-k7pid1ost9d57mfpul62l49ka1d8hnr3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:orientation="horizontal">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_profile_image_author"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="1dp"
+        android:layout_gravity="bottom"
+        android:src="@drawable/profile"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_message_receive"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="2dp"
+       >
+
+    <TextView
+        android:id="@+id/tv_content_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="..."
+        style="@style/font_text_normal"
+        android:textColor="@color/colorPrimaryDark"
+        android:padding="1dp"
+
+        />
+
+        <TextView
+            android:id="@+id/tv_date_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="la date"
+            style="@style/font_text_normal"
+            android:textColor="@color/colorAccentDark"
+            android:layout_gravity="right"
+            android:textSize="12sp"
+            android:layout_marginRight="5dp"/>
+    </LinearLayout>
+
+</LinearLayout>

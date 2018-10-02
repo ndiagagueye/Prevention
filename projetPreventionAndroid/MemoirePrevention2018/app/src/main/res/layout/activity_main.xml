@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.gueye.memoireprevention2018.activities.MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/main_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include
+            android:id="@+id/main_page_toolbar"
+            layout="@layout/app_bar_layout"
+            />
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/mainBottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:fitsSystemWindows="true"
+            android:layout_gravity="bottom"
+            app:itemBackground="@color/colorPrimaryDark"
+            app:itemIconTint="@drawable/color_states"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/menu_navigation_bottom"
+            android:layout_alignParentBottom="true"
+            android:overScrollMode="never"
+            tools:layout_editor_absoluteX="0dp"
+            >
+
+            <TextView
+                android:id="@+id/count_notif"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="194dp"
+                android:background="@drawable/backgroun_notification"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccentDark"
+                android:layout_marginTop="6dp"
+                android:text="0"
+                android:visibility="invisible" />
+
+        </android.support.design.widget.BottomNavigationView>
+
+
+
+        <FrameLayout
+            android:id="@+id/main_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_above="@+id/mainBottomNav"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/main_page_toolbar">
+        </FrameLayout>
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fl_add_new_alerte"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_above="@+id/mainBottomNav"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_send_alert" />
+    </RelativeLayout>
+
+</RelativeLayout>
+

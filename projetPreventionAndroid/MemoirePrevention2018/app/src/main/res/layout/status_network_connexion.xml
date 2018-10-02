@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/conStatusIv"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:scaleType="fitXY"/>
+    <TextView
+        android:id="@+id/conStatusTv"
+        android:textAlignment="center"
+        android:textColor="#999999"
+        android:textSize="20sp"
+        style="@style/font_text_normal"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <!--button to check network status-->
+    <Button
+        android:id="@+id/conStatusBtn"
+        style="@style/StrokeLargeButtonStyle"
+        android:height="29dp"
+        android:width="200dp"
+        android:text="Reéssayer"
+        android:layout_marginBottom="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/nav_post"
+        android:title="Ajouter une annonce"
+        android:icon="@drawable/add_post"/>
+
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Profil"
+        />
+
+    <item
+        android:id="@+id/nav_home"
+        android:title="Accueil"
+        />
+
+    <item
+        android:id="@+id/nav_freiends"
+        android:title="Amis"
+        />
+
+    <item
+        android:id="@+id/nav_find_friends"
+        android:title="Retrouver des amis"
+        />
+
+    <item
+        android:id="@+id/nav_messages"
+        android:title="Messages"
+        />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:title="Parametres"
+        />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Deconnexion"
+        />
+
+
+</menu>
