@@ -1,6 +1,7 @@
 package com.example.gueye.memoireprevention2018.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -65,7 +66,9 @@ public class CommentsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Récentes commentaires");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        current_user_id = firebaseAuth.getCurrentUser().getUid();
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("ShareIdUser", MODE_PRIVATE);
+        current_user_id = preferences.getString("user_id", null);
+
         blog_post_id = getIntent().getStringExtra("blog_post_id");
 
         comment_field = findViewById(R.id.et_new_comment_usert);

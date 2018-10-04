@@ -2,6 +2,7 @@ package com.example.gueye.memoireprevention2018.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.gueye.memoireprevention2018.R;
+import com.example.gueye.memoireprevention2018.utils.MySharePreference;
 import com.facebook.CallbackManager;
 import com.facebook.ProfileTracker;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,28 +44,57 @@ public class SetupFacebookActivity extends AppCompatActivity {
     private TextView mProfileName;
     private EditText phone;
     private EditText callEmergency;
-    //private String call_number;
     private CountryCodePicker codeCountry;
     private CountryCodePicker codeCountryEmergency;
     private Button saveSetupBtn;
     private Uri mainImageURI = null;
-    private ProgressBar setup_progress;
     private boolean isChanged = false;
     private ProgressDialog loadinBar;
 
-    private CallbackManager mCallbackManager;
-    ProfileTracker profileTracker;
+
 
     //Firebase
     private StorageReference storageReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
     private String user_id;
+    private String username;
+    private String image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_setup_facebook );
+
+        init();
+        //Infos Facebook
+
+        username = getIntent().getStringExtra("username");
+        image = getIntent().getStringExtra("imageUrl");
+
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("MyPrefSetup", MODE_PRIVATE);
+        user_id = preferences.getString("user_id", null);
+        username = preferences.getString("name", null);
+        image = preferences.getString("image", null);
+
+
+        mProfileName.setText(username);
+
+        RequestOptions plasholderOption = new RequestOptions();
+        plasholderOption.placeholder( R.drawable.profile );
+       Glide.with(SetupFacebookActivity.this ).setDefaultRequestOptions( plasholderOption ).load( image ).into( mProfileImage );
+
+
+        //Clique sur le button save
+
+       completeProfle();
+
+
+
+
+    }
+
+    private void init() {
 
         setupToolbar =  findViewById(R.id.setup_facebook_toolbar);
         setSupportActionBar(setupToolbar);
@@ -71,7 +102,6 @@ public class SetupFacebookActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        //user_id = firebaseAuth.getCurrentUser().getUid();
         firebaseFirestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
@@ -87,19 +117,9 @@ public class SetupFacebookActivity extends AppCompatActivity {
         codeCountryEmergency = findViewById(R.id.code_urgence_country_picker_facebook);
         saveSetupBtn = findViewById(R.id.save_btn_facebook);
 
-        //Infos Facebook
+    }
 
-        final String username = getIntent().getStringExtra("username");
-        final String image = getIntent().getStringExtra("imageUrl");
-
-        mProfileName.setText(username);
-
-        RequestOptions plasholderOption = new RequestOptions();
-        plasholderOption.placeholder( R.drawable.profile );
-       Glide.with(SetupFacebookActivity.this ).setDefaultRequestOptions( plasholderOption ).load( image ).into( mProfileImage );
-
-
-        //Clique sur le button save
+    private void completeProfle() {
 
         saveSetupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +133,7 @@ public class SetupFacebookActivity extends AppCompatActivity {
                 final String telephone = codePicker+" "+number;
                 final String telephoneEmergency = codePickerEmergency+" "+numberEmergency;
 
-                 if(TextUtils.isEmpty(telephone)){
+                if(TextUtils.isEmpty(telephone)){
                     Toast.makeText( SetupFacebookActivity.this, "Veuillez saisir votre numéro de telephone.", Toast.LENGTH_LONG ).show();
 
                 }else if(TextUtils.isEmpty(telephoneEmergency)){
@@ -124,50 +144,15 @@ public class SetupFacebookActivity extends AppCompatActivity {
                     loadinBar.setMessage("Chargement en cours...");
                     loadinBar.setCanceledOnTouchOutside(false);
                     loadinBar.show();
+                    storeFirestore(username, telephone, telephoneEmergency,image);
 
-                    if (isChanged){
-
-                        StorageReference image_path = storageReference.child("profile_image").child(user_id + ".jpg");
-                        image_path.putFile(mainImageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                                if (task.isSuccessful()) {
-                                    //setup_progress.setVisibility(View.INVISIBLE);
-                                    storeFirestore(task, username, telephone, telephoneEmergency,image);
-
-                                } else {
-                                    loadinBar.dismiss();
-                                    String errorMessage = task.getException().getMessage();
-                                    Toast.makeText(SetupFacebookActivity.this, "Image error " + errorMessage, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-
-                    }else{
-                        storeFirestore(null,username, telephone, telephoneEmergency,image);
-
-
-                    }
                 }
             }
         });
-
-
-
-
     }
 
     //Stock infos
-    private void storeFirestore(@NonNull Task<UploadTask.TaskSnapshot> task, String username, String telephone, String telephoneEmergency,String image) {
-
-        Uri download_uri;
-        if (task != null){
-            download_uri = task.getResult().getDownloadUrl();
-
-        }else{
-            download_uri = mainImageURI;
-        }
+    private void storeFirestore(String username, String telephone, String telephoneEmergency,String image) {
 
         String token_id = FirebaseInstanceId.getInstance().getToken();
         final HashMap<String,String> userMap = new HashMap<>();
@@ -176,11 +161,9 @@ public class SetupFacebookActivity extends AppCompatActivity {
         userMap.put("name", username);
         userMap.put("telephone", telephone);
         userMap.put("telephoneEmergency", telephoneEmergency);
-        userMap.put("token_id", token_id );
-        userMap.put("StatusLine", "online" );
-
-        final String user_id = getIntent().getStringExtra("user_id");
-
+        userMap.put("status", "offline" );
+        userMap.put( "token_id", token_id);
+        userMap.put( "user_id", user_id);
 
         firebaseFirestore.collection("Users").document(user_id).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -189,6 +172,15 @@ public class SetupFacebookActivity extends AppCompatActivity {
 
                     Toast.makeText(SetupFacebookActivity.this, "Votre compte a été bien mise à jour. ", Toast.LENGTH_SHORT).show();
                     Intent mainIntent = new Intent(SetupFacebookActivity.this, MainActivity.class);
+
+                    SharedPreferences preferences = getApplicationContext().getSharedPreferences("MyPrefMain", MODE_PRIVATE);
+
+                    final MySharePreference sharedPreferences = new MySharePreference(getApplicationContext(),preferences);
+
+                    SharedPreferences.Editor editor = sharedPreferences.pref.edit();
+                    editor.putString("user_id",user_id);
+
+                    editor.commit();
                     startActivity(mainIntent);
                     finish();
                 }else{

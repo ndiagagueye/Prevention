@@ -2,6 +2,7 @@ package com.example.gueye.memoireprevention2018.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,10 +42,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -65,8 +69,10 @@ public class ProfilActivity extends AppCompatActivity {
     private Uri mainImageURI = null;
     private boolean isChanged = false;
     private ProgressDialog loadinBar;
-    private DatabaseReference reference;
+    private DatabaseReference reference, ref;
     private int positionSelect = 0;
+    private String userIdFace;
+    private FirebaseUser fUser;
     private Spinner typeSpinner;
     private static final int REQUEST_CALL =1;
     private TypeUserAdaptater customAdaptater;
@@ -80,7 +86,7 @@ public class ProfilActivity extends AppCompatActivity {
 
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
-    private String mUserId, user_id;
+    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +114,6 @@ public class ProfilActivity extends AppCompatActivity {
 
         typeSpinner.setAdapter(customAdaptater);
 
-
         // Click on CircleImageView
         mchangeProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +127,28 @@ public class ProfilActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(ProfilActivity.this, MainActivity.class));
+    }
+    private boolean user_is_logged_in_via_Facebook_in_Firebase_Auth(){
+
+        if (fUser != null) {
+            for (UserInfo userInfo : fUser.getProviderData()) {
+                if (userInfo.getProviderId().equals("facebook.com")) {
+                    Toast.makeText( this, "Using facebook", Toast.LENGTH_SHORT ).show();
+                    return true;
+                }
+            }
+            Toast.makeText( this, "Using Firebase", Toast.LENGTH_SHORT ).show();
+
+            return false;
+        }
+        return false;
+    }
+
+
     public void init(){
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -130,8 +157,11 @@ public class ProfilActivity extends AppCompatActivity {
         callUrgence = findViewById(R.id.urgence_call_btn);
         inviteFriend = findViewById(R.id.invite_friend_btn);
 
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("MyPrefMain", MODE_PRIVATE);
+        userIdFace = preferences.getString("user_id", null);
+        fUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        mUserId = mAuth.getCurrentUser().getUid();
+        mUserId = getCurrentUserId();
 
         mToolbar = findViewById(R.id.profile_toolbar);
 
@@ -166,11 +196,26 @@ public class ProfilActivity extends AppCompatActivity {
         inviteFriend.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                shareIt();
                 Toast.makeText( ProfilActivity.this, "S'invite mes proche", Toast.LENGTH_SHORT ).show();
             }
         } );
 
     }
+
+    public String getCurrentUserId(){
+        String userId = null;
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        if (firebaseAuth != null)
+            userId = firebaseAuth.getUid();
+
+        if (user_is_logged_in_via_Facebook_in_Firebase_Auth() == true){
+            return  userIdFace;
+        }
+        return userId;
+    }
+
 
     private void saveInfo() {
 
@@ -276,23 +321,32 @@ public class ProfilActivity extends AppCompatActivity {
 
     public  void  loadInfo(){
 
+        mFirestore.collection("Users").document(mUserId).collection("Benevol").document(mUserId).get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    long position = documentSnapshot.getLong("benevol");
+                    typeSpinner.setSelection( (int) position );
+                }
+            }
+        } );
+
         mFirestore.collection("Users").document(mUserId).get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                if (documentSnapshot == null) return;
 
                 if (documentSnapshot.exists()){
                     String name = documentSnapshot.getString( "name" );
                     String telephone = documentSnapshot.getString( "telephone" );
                     String telephoneEmergency = documentSnapshot.getString( "telephoneEmergency");
                     String image = documentSnapshot.getString( "image" );
-                    long position = documentSnapshot.getLong("typeUser");
+
 
                     mUsername.setText( name );
                     mTelephone.setText(telephone);
                     mTelephoneEmergency.setText(telephoneEmergency);
-                    typeSpinner.setSelection( (int) position );
-
-
                     RequestOptions plasholderOption = new RequestOptions();
                     plasholderOption.placeholder( R.drawable.back );
 
@@ -338,6 +392,29 @@ public class ProfilActivity extends AppCompatActivity {
     }
 
 
+    // invite Friend
+    private void shareIt() {
+        //sharing implementation here
+        final Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Invitation");
+        mFirestore.collection("Users").document(mUserId).get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+            if (documentSnapshot == null) return;
+
+            if (documentSnapshot.exists()){
+                String name = documentSnapshot.getString( "name" );
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, name+" Vous invite à utiliser l'application");
+                startActivity(Intent.createChooser(sharingIntent, "inviter via"));
+            }
+
+            }
+        } );
+        //sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "  ");
+
+    }
 
 
     //Stock infos
@@ -351,9 +428,14 @@ public class ProfilActivity extends AppCompatActivity {
             download_uri = mainImageURI;
         }
 
-        reference = FirebaseDatabase.getInstance().getReference( "Users" ).child(mUserId);
+        ref = FirebaseDatabase.getInstance().getReference( "Users/"+mUserId+"/Benevol" ).child(mUserId);
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(mUserId);
+
 
         final HashMap<String,Object> userMap = new HashMap<>();
+        final HashMap<String,Object> benevolMap = new HashMap<>();
+
+        benevolMap.put("benevol", typeUser);
 
         if(task != null){
             userMap.put("image", download_uri.toString());
@@ -361,12 +443,14 @@ public class ProfilActivity extends AppCompatActivity {
             userMap.put("name", username);
             userMap.put("telephone", telephone);
             userMap.put("telephoneEmergency", telephoneEmergency);
-            userMap.put("typeUser", typeUser);
         }
 
         reference.updateChildren(userMap );
+        ref.push().setValue(benevolMap);
 
-        mFirestore.collection("Users").document(mUserId).update(userMap).addOnSuccessListener( new OnSuccessListener<Void>() {
+        mFirestore.collection("Users/"+mUserId+"/Benevol").document(mUserId).set(benevolMap);
+
+         mFirestore.collection("Users").document().update(userMap).addOnSuccessListener( new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 loadinBar.dismiss();

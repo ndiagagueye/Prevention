@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -175,8 +176,6 @@ public class SendAlerteActivity extends Activity {
 
                 Log.d(TAG, "onClick:  current locatioon is " + currentLocationDevice);
 
-                Toast.makeText(SendAlerteActivity.this, "click sur send alerte btn ", Toast.LENGTH_SHORT).show();
-
                 //methode de base de l'enregistrement de l'alerte
 
                 if(!TextUtils.isEmpty(etdescriptionPostAlert.getText().toString()) ){
@@ -203,6 +202,9 @@ public class SendAlerteActivity extends Activity {
                             storePostAlertRequest(description, positionSelect,currentUserId,latitude,longitude);
                         }
                     }
+                }else{
+
+                    Toast.makeText( SendAlerteActivity.this, "Veuillez donner une description", Toast.LENGTH_SHORT ).show();
                 }
             }
         });
@@ -225,7 +227,9 @@ public class SendAlerteActivity extends Activity {
         showDialogPicker();
 
         firebaseAuth = FirebaseAuth.getInstance();
-        currentUserId = firebaseAuth.getCurrentUser().getUid();
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("ShareIdUser", MODE_PRIVATE);
+        currentUserId = preferences.getString("user_id", null);
+
         firebaseFirestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
     }
@@ -394,6 +398,9 @@ public class SendAlerteActivity extends Activity {
 
                             isLocationFound = true;
 
+                            Toast.makeText( SendAlerteActivity.this, "UserSend "+currentUserId, Toast.LENGTH_SHORT ).show();
+
+
                             Toast.makeText(SendAlerteActivity.this, "Location found ", Toast.LENGTH_SHORT).show();
 
                         } else {
@@ -458,6 +465,7 @@ public class SendAlerteActivity extends Activity {
         postMap.put("image_thumb", downloadthumbUri);
         postMap.put("user_id", current_user_id);
         postMap.put("timestamp",currentTime );
+
 
 
         firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {

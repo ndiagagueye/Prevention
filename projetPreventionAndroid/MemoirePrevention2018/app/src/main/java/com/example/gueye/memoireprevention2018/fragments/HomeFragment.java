@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
 
             loading_spinner.setVisibility(View.VISIBLE);
 
-            Query firstQuery = firebaseFirestore.collection("Posts").orderBy("timestamp", Query.Direction.ASCENDING);
+            Query firstQuery = firebaseFirestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING);
             firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {

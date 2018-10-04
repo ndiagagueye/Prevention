@@ -49,7 +49,7 @@
                     android:layout_alignBottom="@+id/profile_image_circle"
                     android:layout_marginLeft="140dp"
 
-                    app:srcCompat="@drawable/ic_take_a_picture" />
+                    app:srcCompat="@drawable/photo_camera" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -245,7 +245,7 @@
                     android:textSize="20dp"
                     android:textStyle="bold"
                     android:textColor="#212121"
-                    android:drawableLeft="@drawable/invit"
+                    android:drawableLeft="@drawable/invite"
                     android:text="Inviter mes proches"
                     tools:ignore="RtlCompat" />
 

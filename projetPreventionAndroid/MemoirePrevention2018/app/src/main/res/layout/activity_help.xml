@@ -30,7 +30,7 @@
             android:padding="14dp"
             app:centered="true"
             app:radius="5dp"
-            app:strokeWidth="2dp"
+            app:strokeWidth="3dp"
             app:fillColor="@color/accent"
             app:pageColor="#fff"
             app:snap="false" />

@@ -1,6 +1,7 @@
 package com.example.gueye.memoireprevention2018.activities;
         import android.content.DialogInterface;
         import android.content.Intent;
+        import android.content.SharedPreferences;
         import android.content.pm.PackageManager;
         import android.graphics.drawable.Drawable;
         import android.net.Uri;
@@ -30,12 +31,14 @@ package com.example.gueye.memoireprevention2018.activities;
         import com.example.gueye.memoireprevention2018.modele.Notifications;
         import com.example.gueye.memoireprevention2018.modele.Users;
         import com.example.gueye.memoireprevention2018.utils.Const;
+        import com.example.gueye.memoireprevention2018.utils.MySharePreference;
         import com.facebook.login.LoginManager;
         import com.google.android.gms.tasks.OnCompleteListener;
         import com.google.android.gms.tasks.OnSuccessListener;
         import com.google.android.gms.tasks.Task;
         import com.google.firebase.auth.FirebaseAuth;
         import com.google.firebase.auth.FirebaseUser;
+        import com.google.firebase.auth.UserInfo;
         import com.google.firebase.database.DataSnapshot;
         import com.google.firebase.database.DatabaseError;
         import com.google.firebase.database.DatabaseReference;
@@ -66,12 +69,13 @@ package com.example.gueye.memoireprevention2018.activities;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private String user_id_logn_whit_facebook = null;
+    private String user_id_login_with_facebook;
     private FirebaseFirestore firebaseFirestore;
     private BottomNavigationView mainBottomNav;
     private HomeFragment homeFragment;
     private FirebaseUser fUser;
     private String current_user_id;
+    private String userIdFace;
     private static final int REQUEST_CALL = 1;
     private DatabaseReference reference;
     //private AccountFragment accountFragment;
@@ -84,7 +88,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView( R.layout.activity_main );
 
         mAuth = FirebaseAuth.getInstance();
+
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("MyPrefMain", MODE_PRIVATE);
+        userIdFace = preferences.getString("user_id", null);
         fUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //user_is_logged_in_via_Facebook_in_Firebase_Auth();
 
         FirebaseMessaging.getInstance().subscribeToTopic("alerte");
         //Log.d( "Message Token", Common.currentToken );
@@ -92,31 +101,35 @@ public class MainActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         navigationDrawer( savedInstanceState, Const.AVATAR, "", "" );
+        current_user_id = getCurrentUserId();
 
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("ShareIdUser", MODE_PRIVATE);
 
-        if (mAuth.getCurrentUser() != null) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("user_id",current_user_id);
+        editor.commit();
 
-            current_user_id = mAuth.getCurrentUser().getUid();
+            Log.d( "MainActivity", "USER_ID"+current_user_id);
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference( "Users" ).child( current_user_id );
-            reference.addValueEventListener( new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        Users user = dataSnapshot.getValue( Users.class );
-                        String name = user.getName();
-                        String telephone = user.getTelephone();
-                        String image = user.getImage();
-                        if (name != null && telephone != null && image != null) navigationDrawer( savedInstanceState, image, name, telephone );
+            if (current_user_id != null){
+
+                firebaseFirestore.collection("Users").document(current_user_id).get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()){
+                            String name = documentSnapshot.getString("name");
+                            String telephone = documentSnapshot.getString("telephone");
+                            String image = documentSnapshot.getString("image");
+                            if (name != null && telephone != null && image != null) navigationDrawer( savedInstanceState, image, name, telephone );
+                        }
                     }
+                } );
 
-                }
+            }else {
+                sendTologin();
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
 
-                }
-            } );
 
 
             flabAddNewAlerte = (FloatingActionButton) findViewById( R.id.fl_add_new_alerte );
@@ -187,9 +200,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             } );
 
-        }else{ sendTologin();}
 
 }
+
+   private boolean user_is_logged_in_via_Facebook_in_Firebase_Auth(){
+
+       if (fUser != null) {
+           for (UserInfo userInfo : fUser.getProviderData()) {
+               if (userInfo.getProviderId().equals("facebook.com")) {
+                   Toast.makeText( this, "Using facebook", Toast.LENGTH_SHORT ).show();
+                   return true;
+               }
+           }
+           Toast.makeText( this, "Using Firebase", Toast.LENGTH_SHORT ).show();
+
+           return false;
+       }
+       return false;
+   }
 
 
     // Dialling phone
@@ -257,12 +285,12 @@ public class MainActivity extends AppCompatActivity {
         SecondaryDrawerItem add_alert = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 3 ).withName( "Alertés" ).withIcon( R.drawable.clock );
 
         //settings, help, urgences items
-        SecondaryDrawerItem help = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 4 ).withName( "Aide" ).withIcon( R.drawable.ic_help );
+        SecondaryDrawerItem help = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 4 ).withName( "Aide" ).withIcon( R.drawable.helpp );
         SecondaryDrawerItem location = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 5 ).withName( "Ma position" ).withIcon( R.drawable.marker_map );
         SecondaryDrawerItem urgences = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 6 ).withName( "Urgences" ).withIcon( R.drawable.call );
         SecondaryDrawerItem apropos = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 7 ).withName( "A propos" ).withIcon( R.drawable.about );
         SecondaryDrawerItem membres = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 8 ).withName( "membres" ).withIcon( R.drawable.usersgroup );
-        SecondaryDrawerItem more = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 9 ).withName( "En savoir +" ).withIcon( R.drawable.plus );
+        SecondaryDrawerItem benevol = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 9 ).withName( "Bénévoles" ).withIcon( R.drawable.help );
         SecondaryDrawerItem logout = (SecondaryDrawerItem) new SecondaryDrawerItem().withIdentifier( 10 ).withName( "Deconnexion" ).withIcon( R.drawable.logoutt );
 
         //Toolbar
@@ -278,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
                 //new SectionDrawerItem(),//.withName("Categories"),
                 home, my_profile,
                 //new DividerDrawerItem(),
-                add_alert, location, urgences, membres, more, help, apropos, logout
+                add_alert, location, urgences, membres, benevol, help, apropos, logout
 
         ).withOnDrawerItemClickListener( new Drawer.OnDrawerItemClickListener() {
             @Override
@@ -289,7 +317,6 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent( MainActivity.this, MainActivity.class );
                     } else if (drawerItem.getIdentifier() == 2) {
                         intent = new Intent( MainActivity.this, ProfilActivity.class );
-                        if (user_id_logn_whit_facebook != null) intent.putExtra( "user_id", user_id_logn_whit_facebook );
                         startActivity( intent );
 
                     } else if (drawerItem.getIdentifier() == 3) {
@@ -325,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
 
                     } else if (drawerItem.getIdentifier() == 9) {
 
-                        //intent = new Intent(MainActivity.this, StatusNeworkActivity.class);
+                        intent = new Intent(MainActivity.this, ListBenevolActivity.class);
                         overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
 
 
@@ -377,14 +404,16 @@ public class MainActivity extends AppCompatActivity {
         countNotif();
     }
 
-    public String getCurrentUserId( String faceUserId, String fireUserId){
+    public String getCurrentUserId(){
+        String userId = null;
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        if (firebaseAuth != null)
+            userId = firebaseAuth.getUid();
 
-        fireUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (faceUserId == null && fireUserId != null){
-            return  fireUserId;
-        }else{
-            return faceUserId;
+        if (user_is_logged_in_via_Facebook_in_Firebase_Auth() == true){
+            return  userIdFace;
         }
+        return userId;
     }
 
 
@@ -408,14 +437,15 @@ public class MainActivity extends AppCompatActivity {
 
                             Notifications notifications = doc.getDocument().toObject( Notifications.class );
 
-                            if (!current_user_id.equals( notifications.getFromNotif() )) {
-                                mNotifList.add( notifications );
+                            if (current_user_id !=null){
+                                if (!current_user_id.equals( notifications.getFromNotif() )) {
+                                    mNotifList.add( notifications );
 
-                                countNotif.setVisibility( View.VISIBLE );
-                                countNotif.setText(""+ count );
+                                    countNotif.setVisibility( View.VISIBLE );
+                                    countNotif.setText(""+ count );
 
+                                }
                             }
-
 
                         }
                     }
@@ -466,23 +496,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
 
-    protected void onStart() {
+    protected void onStart(){
 
         //launch the service for emmergency alerte
-
         startServiceApp();
 
-        String current_user_id;
         super.onStart();
         // Get instance for current user
         FirebaseUser currentUser =  FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null){
+        if (currentUser == null && user_is_logged_in_via_Facebook_in_Firebase_Auth() == false){
 
             sendTologin();
 
         }else{
 
-            current_user_id = mAuth.getCurrentUser().getUid();
+            current_user_id = getCurrentUserId();
             firebaseFirestore.collection("Users").document(current_user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {

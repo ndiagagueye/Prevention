@@ -1,6 +1,7 @@
 package com.example.gueye.memoireprevention2018.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -46,7 +47,6 @@ import retrofit2.Response;
 public class EmergencyCallActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private TextView txvResult;
-    private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
     private String user_id;
     private String saveDate;
@@ -62,8 +62,6 @@ public class EmergencyCallActivity extends AppCompatActivity {
     private Location currentLocationDevice;
     private double latitude  ;
     private double longitude ;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +82,6 @@ public class EmergencyCallActivity extends AppCompatActivity {
     }
 
     public  void init(){
-        mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
         txvResult = (TextView) findViewById(R.id.txvResult);
         listener_sensor = findViewById( R.id.listener_sensor );
@@ -93,13 +90,19 @@ public class EmergencyCallActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Urgences");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(false);
-        user_id = mAuth.getCurrentUser().getUid();
+        //user_id = mAuth.getCurrentUser().getUid();
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("ShareIdUser", MODE_PRIVATE);
+        user_id = preferences.getString("user_id", null);
+        //fUser = FirebaseAuth.getInstance().getCurrentUser();
+
         subscribeToTopic();
 
         listener_sensor.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity( new Intent( EmergencyCallActivity.this, AlerteListenerActivity.class ) );
+
+                Toast.makeText( EmergencyCallActivity.this, "Listener", Toast.LENGTH_SHORT ).show();
+                //startActivity( new Intent( EmergencyCallActivity.this, AlerteListenerActivity.class ) );
             }
         } );
     }
@@ -177,7 +180,7 @@ public class EmergencyCallActivity extends AppCompatActivity {
 
         Map<String, Object> postMap = new HashMap<>();
         postMap.put("description", description);
-        postMap.put("type", 7);
+        postMap.put("type", 0);
         postMap.put("latitude", latitude);
         postMap.put("longitude", longitude);
         postMap.put("image_url", downloadUri);

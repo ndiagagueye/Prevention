@@ -3,11 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.gueye.memoireprevention2018">
 
-
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
-
 
     <uses-permission
         android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
@@ -113,8 +111,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".appServices.ShakeService" />
+
         <receiver android:name=".appServices.OnBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -132,7 +130,14 @@
         <activity android:name=".activities.DiscussionsActivity" />
         <activity android:name=".activities.DetailsNotificationActivity" />
         <activity android:name=".activities.MyPositionActivity" />
-        <activity android:name=".activities.AlerteListenerActivity"></activity>
+        <activity android:name=".activities.AlerteListenerActivity" />
+        <activity
+            android:name=".activities.ListBenevolActivity"
+            android:parentActivityName=".activities.MainActivity" />
+        <activity
+            android:name=".activities.ProfileBenevolActivity"
+            android:parentActivityName=".activities.ListBenevolActivity" />
+        <activity android:name=".activities.RemoveMyAcountActivity"></activity>
     </application>
 
 </manifest>

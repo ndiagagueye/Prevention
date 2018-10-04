@@ -2,6 +2,7 @@ package com.example.gueye.memoireprevention2018.adaptaters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -39,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by gueye on 13/08/18.
@@ -81,7 +84,11 @@ public class AlerteRecyclerAdapter extends RecyclerView.Adapter<AlerteRecyclerAd
         // Get Id for target post
         final String blogPostId =  blog_list.get(position).blogPostId;
         //get Current User id who is login
-        final String currentUserId = firebaseAuth.getCurrentUser().getUid();
+
+        SharedPreferences preferences = context.getSharedPreferences("ShareIdUser", MODE_PRIVATE);
+        final String currentUserId = preferences.getString("user_id", null);
+
+
         // Put description
         String desc_data = blog_list.get(position).getDescription();
         holder.setDescText(holder.extract(desc_data));

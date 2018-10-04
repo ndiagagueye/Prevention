@@ -3,6 +3,7 @@ package com.example.gueye.memoireprevention2018.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -29,6 +30,12 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,6 +43,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -53,43 +61,40 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private EditText login_email_address, login_password;
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
     private FirebaseFirestore mFirestore;
     private ProgressDialog loadinBar;
     private RelativeLayout btnLoginGoogle;
-    public boolean isLoginWithFacebook = false;
     private final String TAG = "Facebook Login";
     FirebaseFirestore firebaseFirestore;
     private RelativeLayout mFacebook;
     private CallbackManager mCallbackManager;
     ProfileTracker profileTracker;
+    Intent logFacebook;
+
+    //google account signin
+    private  final int RC_SIGN_IN =1;
+    private GoogleApiClient mGoogleSignInClient;
 
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_login );
 
-        FirebaseMessaging.getInstance().subscribeToTopic("alerte");
+        logFacebook = new Intent(LoginActivity.this, SetupFacebookActivity.class);
 
+        init();
+        login();
+        initFacebook();
+        loginGoole();
 
-        firebaseFirestore = FirebaseFirestore.getInstance( );
-        loadinBar = new ProgressDialog(this);
-        mFirestore = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+    }
 
-        forget_password = (TextView) findViewById(R.id.forgot_password);
-        createAccount = (TextView) findViewById(R.id.textViewCreateAccount);
-        login_email_address = (EditText) findViewById(R.id.email_login);
-        login_password = (EditText) findViewById(R.id.password_login);
-        btnLogin = (Button) findViewById(R.id.btn_login);
-        btnLoginGoogle = findViewById(R.id.logGoogleSignInButton);
-
-
-        //Facebook
-        mFacebook = findViewById(R.id.btn_login_fb);
+    private void initFacebook() {
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
@@ -119,7 +124,106 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //profileTracker.startTracking();
+    }
+
+    private void loginGoole() {
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                        Toast.makeText(LoginActivity.this,"Connexion echouée",Toast.LENGTH_SHORT).show();
+
+                    }
+                }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+
+        btnLoginGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+
+            }
+        });
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "signInWithCredential:success");
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            loadinBar.dismiss();
+
+                        } else {
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            String message = task.getException().getMessage();
+                            startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+                            Toast.makeText(LoginActivity.this, "Pas d'authentification, réessayez"+message,Toast.LENGTH_SHORT).show();
+                            loadinBar.dismiss();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result back to the Facebook SDK
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        Profile userProfile = Profile.getCurrentProfile();
+        setUpImageAndInfo(userProfile);
+
+        if (requestCode == RC_SIGN_IN) {
+
+            loadinBar.setTitle( "" );
+            loadinBar.setMessage( "veuillez patienter, nous vous autorisons à vous connecter à votre compte" );
+            loadinBar.setCanceledOnTouchOutside( false );
+            loadinBar.show();
+
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent( data );
+
+            if (result.isSuccess()) {
+
+                GoogleSignInAccount account = result.getSignInAccount();
+
+                firebaseAuthWithGoogle( account );
+                Toast.makeText( LoginActivity.this, "Veuillez patientez s'il vous plait !", Toast.LENGTH_SHORT ).show();
+            }
+        }
+
+    }
+
+    private void init() {
+
+        FirebaseMessaging.getInstance().subscribeToTopic("alerte");
+
+        firebaseFirestore = FirebaseFirestore.getInstance( );
+        loadinBar = new ProgressDialog(this);
+        mFirestore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        forget_password = (TextView) findViewById(R.id.forgot_password);
+        createAccount = (TextView) findViewById(R.id.textViewCreateAccount);
+        login_email_address = (EditText) findViewById(R.id.email_login);
+        login_password = (EditText) findViewById(R.id.password_login);
+        btnLogin = (Button) findViewById(R.id.btn_login);
+        btnLoginGoogle = findViewById(R.id.logGoogleSignInButton);
+        //Facebook
+        mFacebook = findViewById(R.id.btn_login_fb);
 
         forget_password.setText(fromHtml("<font color='#999999'>Mot de passe oublié ?</font><font color='#00b8d4'><style ='bold' >Réinitialiser.</style></font>"));
         forget_password.setOnClickListener(new View.OnClickListener() {
@@ -148,9 +252,8 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        // CLICK ON BTN LOGIN
 
-        login();
+
     }
 
     private void login() {
@@ -246,7 +349,6 @@ public class LoginActivity extends AppCompatActivity {
         } );
     }
 
-
     public void updateToken(){
 
         String token_id = FirebaseInstanceId.getInstance().getToken();
@@ -262,6 +364,96 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    public void setUpImageAndInfo(Profile userProfile) {
+        //This method will fill up the ImageView and TextView
+        // that we initialized before.
+        if (userProfile !=null) {
+            final String userInfo = userProfile.getFirstName() + " " + userProfile.getLastName();
+            final String user_id = userProfile.getId();
+            final String imageUrl = "https://graph.facebook.com/" + userProfile.getId().toString() + "/picture?type=large";
+
+            SharedPreferences preferences = getApplicationContext().getSharedPreferences("MyPrefSetup", MODE_PRIVATE);
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("user_id",user_id);
+            editor.putString("name",userInfo);
+            editor.putString("image",imageUrl);
+            editor.commit();
+
+            Toast.makeText( this, "user_id_face "+user_id, Toast.LENGTH_SHORT ).show();
+
+            mFirestore.collection( "Users" ).document( user_id ).get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists()){
+                        String name = documentSnapshot.getString( "name" );
+                        String telephone = documentSnapshot.getString( "telephone" );
+                        String telephoneEmergency = documentSnapshot.getString( "telephoneEmergency" );
+                        String image = documentSnapshot.getString( "image" );
+                        if (!TextUtils.isEmpty( name ) && !TextUtils.isEmpty( telephone ) && !TextUtils.isEmpty( image ) && !TextUtils.isEmpty( telephoneEmergency )) {
+                            Intent mainIntent = new Intent( LoginActivity.this,MainActivity.class);
+
+                            SharedPreferences prefMain = getApplicationContext().getSharedPreferences("MyPrefMain", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefMain.edit();
+                            editor.putString("user_id",user_id);
+                            editor.commit();
+
+                            startActivity(mainIntent);
+                        }
+                    } else {
+                        startActivity(logFacebook);
+
+                    }
+                }
+            } );
+
+        }else Toast.makeText(LoginActivity.this, "profile null", Toast.LENGTH_SHORT ).show();
+
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+
+                            profileTracker = new ProfileTracker() {
+                                @Override
+                                protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
+
+                                    //final  Intent setupFacebookIntent = new Intent(LoginActivity.this, SetupFacebookActivity.class);
+                                    if (newProfile == null) {
+                                        Intent setupIntent = new Intent( LoginActivity.this, SetupActivity.class );
+                                        startActivity(setupIntent);
+                                    }
+                                }
+                            };
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html) {
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
+    }
 
     public boolean checkNetworkConnectionStatus() {
         ConnectivityManager connMgr = (ConnectivityManager)
@@ -277,113 +469,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void setUpImageAndInfo(Profile userProfile, final Intent setupFacebookIntent) {
-        //This method will fill up the ImageView and TextView
-        // that we initialized before.
-        if (userProfile !=null) {
-            final String userInfo = userProfile.getFirstName() + " " + userProfile.getLastName();
-            final String user_id = userProfile.getId();
-            final String imageUrl = "https://graph.facebook.com/" + userProfile.getId().toString() + "/picture?type=large";
-
-            setupFacebookIntent.putExtra( "username", userInfo );
-            setupFacebookIntent.putExtra( "user_id", user_id );
-            setupFacebookIntent.putExtra( "imageUrl", imageUrl );
-            setupFacebookIntent.putExtra( "isFacebook", true );
-
-            final Intent mainIntent = new Intent( LoginActivity.this, MainActivity.class );
-
-            mainIntent.putExtra("user_id", user_id);
-            mainIntent.putExtra("image",imageUrl);
-            mainIntent.putExtra("name", userInfo);
-
-            Toast.makeText( this, "user_id_face"+user_id, Toast.LENGTH_SHORT ).show();
-
-
-            mFirestore.collection( "Users" ).document( user_id ).get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()){
-                        String name = documentSnapshot.getString( "name" );
-                        String telephone = documentSnapshot.getString( "telephone" );
-                        String telephoneEmergency = documentSnapshot.getString( "telephoneEmergency" );
-                        String image = documentSnapshot.getString( "image" );
-                        if (!TextUtils.isEmpty( name ) && !TextUtils.isEmpty( telephone ) && !TextUtils.isEmpty( image ) && !TextUtils.isEmpty( telephoneEmergency )) {
-                            mainIntent.putExtra( "telephone", telephone );
-                            mainIntent.putExtra( "isFacebook", true );
-                            startActivity( mainIntent );
-                        }
-                    } else {
-                        startActivity( setupFacebookIntent );
-
-                    }
-                }
-            } );
-
-        }else Toast.makeText(LoginActivity.this, "profile null", Toast.LENGTH_SHORT ).show();
-
-    }
-
-    @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String html) {
-        Spanned result;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            result = Html.fromHtml(html);
-        }
-        return result;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Pass the activity result back to the Facebook SDK
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        Profile userProfile = Profile.getCurrentProfile();
-        Intent setupFacebookIntent = new Intent(LoginActivity.this, SetupFacebookActivity.class);
-        setUpImageAndInfo(userProfile,setupFacebookIntent);
-
-    }
-
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            //FirebaseUser user = mAuth.getCurrentUser();
-
-                            //Initialize the ProfileTracker and override its
-                            // onCurrentProfileChanged(...) method.
-                            profileTracker = new ProfileTracker() {
-                                @Override
-                                protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
-
-                                    final  Intent setupFacebookIntent = new Intent(LoginActivity.this, SetupFacebookActivity.class);
-                                    if (newProfile == null) {
-                                        Intent setupIntent = new Intent( LoginActivity.this, SetupActivity.class );
-                                        startActivity(setupIntent);
-                                    }else{
-                                        setUpImageAndInfo(newProfile,setupFacebookIntent);
-
-                                    }
-                                }
-                            };
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
 
 
 

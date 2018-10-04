@@ -1,6 +1,7 @@
 package com.example.gueye.memoireprevention2018.fragments;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -41,7 +44,7 @@ public class NotificationFragment extends Fragment {
     private List<Notifications> mNotifList;
     private FirebaseFirestore mFirestore;
     private ProgressBar loading_spinner_notif;
-    private boolean isNotif = false;
+    private boolean isNotif = true;
 
 
 
@@ -70,7 +73,8 @@ public class NotificationFragment extends Fragment {
 
         mFirestore = FirebaseFirestore.getInstance();
 
-        final String current_user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        SharedPreferences preferences = getContext().getSharedPreferences("ShareIdUser", MODE_PRIVATE);
+        final String current_user_id = preferences.getString("user_id", null);
 
         Query firstQuery = mFirestore.collection("Notifications").orderBy("date", Query.Direction.DESCENDING);
         firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
@@ -95,7 +99,6 @@ public class NotificationFragment extends Fragment {
                             notificationsAdapter.notifyDataSetChanged();
 
                         }
-
 
                     }
 
